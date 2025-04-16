@@ -8,7 +8,7 @@ Create a new conda environment as follows:
 conda create --name wrap python=3.11
 conda activate wrap 
 export PYTHONUSERBASE=$CONDA_PREFIX
-python -m pip install --user torch torchvision
+python -m pip install --user torch torchvision --index-url https://download.pytorch.org/whl/cu124
 python -m pip install --user torch_scatter -f https://data.pyg.org/whl/torch-2.4.0+cu124.html
 python -m pip install --user lightning
 python -m pip install --user torch_geometric
@@ -19,6 +19,12 @@ python -m pip install --user matscipy
 ```
 
 Load environment with `conda activate wrap`
+
+Install this repo as follows:
+
+```
+python -m pip install git+https://github.com/pnnl/SNAP.git
+```
 
 #### Tested Package Versions
 * python 3.11
@@ -116,5 +122,9 @@ If you use this code, please cite our associated publication:
   number={},
   pages={},
   year={2025},
+  doi={10.1038/s41524-025-01572-y},
 }
 ```
+
+### Acknowledgements
+Initial development of this codebase was supported by the "Transferring exascale computational chemistry to cloud computing environment and emerging hardware technologies (TEC^4^)"  project, which is funded by the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences, the Division of Chemical Sciences, Geosciences, and Biosciences (under FWP 82037).
