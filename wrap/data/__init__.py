@@ -23,4 +23,4 @@ reflect those of the United States Government or any agency thereof.
                     under Contract DE-AC05-76RL01830
 '''
 
-from .data import XYZ, XYZLarge, read_stats
+from .data import XYZ, read_stats

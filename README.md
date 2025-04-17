@@ -127,4 +127,4 @@ If you use this code, please cite our associated publication:
 ```
 
 ### Acknowledgements
-Initial development of this codebase was supported by the "Transferring exascale computational chemistry to cloud computing environment and emerging hardware technologies (TEC^4^)"  project, which is funded by the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences, the Division of Chemical Sciences, Geosciences, and Biosciences (under FWP 82037).
+Initial development of this codebase was supported by the "Transferring exascale computational chemistry to cloud computing environment and emerging hardware technologies (TEC4)"  project, which is funded by the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences, the Division of Chemical Sciences, Geosciences, and Biosciences (under FWP 82037).
