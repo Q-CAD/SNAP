@@ -120,7 +120,6 @@ If you use this code, please cite our associated publication:
   journal={npj Computational Materials},
   volume={11},
   number={109},
-  pages={},
   year={2025},
   doi={10.1038/s41524-025-01572-y},
   url={https://www.nature.com/articles/s41524-025-01572-y},
