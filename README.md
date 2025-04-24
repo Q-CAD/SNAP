@@ -118,11 +118,12 @@ If you use this code, please cite our associated publication:
   title={Uncertainty Quantification for Neural Network Potential Foundation Models},
   author={Bilbrey, Jenna A and Firoz, Jesun S and Lee, Mal-Soon and Choudhury, Sutanay},
   journal={npj Computational Materials},
-  volume={},
-  number={},
+  volume={11},
+  number={109},
   pages={},
   year={2025},
   doi={10.1038/s41524-025-01572-y},
+  url={https://www.nature.com/articles/s41524-025-01572-y},
 }
 ```
 

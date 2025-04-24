@@ -26,17 +26,19 @@ reflect those of the United States Government or any agency thereof.
 import scipy.stats as stats
 
 
-def ensemble_margin(ensemble_std, n_ensembles):
-    """Calculate the 95% margin of error from the standard deviation of ensemble predictions 
-       using Student's t-distribution
+def ensemble_uncertainty(ensemble_std, n_ensembles, ci=90):
+    """Calculate the uncertainty for a given confidence interval from the standard deviation 
+       of ensemble predictions using Student's t-distribution.
 
     Args:
        ensemble_std (torch.tensor or numpy.array): Standard deviations of individual predictions.
        n_ensembles (int): Number of models in the ensemble.
+       ci (int or float): Desired confidence interval.
     """
-    # Calculate the t-value for a 95% confidence interval
-    t_value = stats.t.ppf(0.975, n_ensembles - 1) 
+    # Calculate the t-value for a given confidence interval
+    z = 1 - ((100-ci)/2/100)
+    t_value = stats.t.ppf(z, n_ensembles - 1) 
 
-    # Calculate margine of error
+    # Calculate the uncertainty
     return t_value * ensemble_std / (n_ensembles ** 0.5)
 
