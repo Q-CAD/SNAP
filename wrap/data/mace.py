@@ -105,10 +105,12 @@ class XYZ4MACEMP(XYZ):
     def __init__(self, root: str, 
                  model: str = 'medium', 
                  total_energy: bool = False,
+                 mace_reference: bool = True,
                  **kwargs):
 
         self.root = root
         self.model_type = model
+        self.mace_reference = mace_reference
         self._extract_model_properties()
 
         if not total_energy:
@@ -118,6 +120,7 @@ class XYZ4MACEMP(XYZ):
         
     def _extract_model_properties(self):
         model = mace_mp(model=self.model_type, default_dtype="float64", device="cpu")
+        self.model_atomic_energies = model.models[0].atomic_energies_fn.atomic_energies.numpy()
         self.z_table = utils.AtomicNumberTable([int(z) for z in model.models[0].atomic_numbers])
         self.r_max = model.models[0].r_max.item()
         del model
@@ -146,6 +149,11 @@ class XYZ4MACEMP(XYZ):
         reference_energy = sum([atomic_energies['atomic_energies'][elem] for elem in mol.get_atomic_numbers()])
         if not self.total_energy:
             energy -= reference_energy
+
+        # reference to atom energies in MACE foundation model
+        mace_reference_energy = sum([self.model_atomic_energies[1+elem] for elem in mol.get_atomic_numbers()])
+        if self.mace_reference:
+            energy += mace_reference_energy
 
         return Data(edge_index=torch.tensor(edge_index, dtype=torch.long),
                     node_attrs=one_hot.type(dtype),

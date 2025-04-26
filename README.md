@@ -1,5 +1,6 @@
 # It's A SNAP!
-## PyTorch Lightning-based NNP Training Wrapper
+## Scalable Neural network Atomic Potentials (SNAP) 
+A PyTorch Lightning-based neural network potential (NNP) training wrapper.
 
 ### Environment
 Create a new conda environment as follows:
@@ -107,8 +108,6 @@ srun python -m torch.distributed.run --nnodes=1 --nproc_per_node=2 train-mace-mp
     --batch-size 16 --max-epochs 500 --min-epochs 25 \
     --train-forces
 ```
-
-
 
 ### References
 If you use this code, please cite our associated publication:

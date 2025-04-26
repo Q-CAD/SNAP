@@ -39,6 +39,7 @@ if __name__ == "__main__":
     callbacklist = [callbacks.EarlyStopping(monitor='val_loss', patience=args.es_patience, min_delta=0.0001, 
                                             check_finite=True, check_on_train_epoch_end=False),
                     callbacks.ModelCheckpoint(dirpath=setup.savedir, filename='epoch{epoch}', 
+                                              monitor='val_loss', mode='min', save_top_k=1,
                                               auto_insert_metric_name=False, save_last=True),
                    ]
 

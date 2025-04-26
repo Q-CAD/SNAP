@@ -47,7 +47,7 @@ class UniversalLoss(torch.nn.Module):
 
     def forward(self, ref, pred):
         # pred passed in as [E, forces]
-        E_loss = self.energy_weight * self.huber_loss(ref.energy.view(-1), pred[0].view(-1))
+        E_loss = self.energy_weight * self.huber_loss(ref.energy.view(-1)/ref.n_atoms.view(-1), pred[0].view(-1)/ref.n_atoms.view(-1))
         F_loss = self.forces_weight * conditional_huber_forces(ref.forces, pred[1], huber_delta=self.huber_delta)
         return E_loss, F_loss
 
