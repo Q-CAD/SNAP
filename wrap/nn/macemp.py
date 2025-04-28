@@ -36,6 +36,7 @@ import numpy as np
 from mace.tools.utils import AtomicNumberTable
 from mace.modules.utils import extract_invariant
 from mace.modules.blocks import AtomicEnergiesBlock
+from mace.calculators.foundations_models import download_mace_mp_checkpoint
 from wrap.train.args import CommonArgs
 from .base import NNP, weights_init
 from .loss import UniversalLoss, SmoothPinballLoss
@@ -65,7 +66,8 @@ class ModelArgs(CommonArgs):
             choices=["small", "medium", "large", 
                      "small-0b", "medium-0b", 
                      "small-0b2", "medium-0b2", "large-0b2", 
-                     "medium-0b3", "medium-mpa-0"],
+                     "medium-0b3", "medium-mpa-0",
+                     "medium-omat-0"],
             help="MACE-MP model size.",
         )
         self.parser.add_argument(
@@ -123,8 +125,7 @@ class MACEMP(NNP):
 
         # load foundation model
         self.load_foundation()
-
-            
+        
     @property
     def loss_fn(self):
         if self.train_forces:
@@ -134,7 +135,7 @@ class MACEMP(NNP):
 
     def load_foundation(self):
         # load model
-        self.model = torch.load(self._model_path(self.foundation))
+        self.model = torch.load(download_mace_mp_checkpoint(self.foundation))
         for param in self.model.parameters():
             param = param.type(self.torch_dtype)
             
@@ -185,72 +186,6 @@ class MACEMP(NNP):
                                     weights_init(sublayer)
                                     
         logging.info('...all model weights reset.')
-
-    
-    def _model_path(self, model):
-        """Download pretrained MACE model."""
-        if model in (None, "medium-mpa-0") and os.path.isfile(local_model_path):
-            logging.info(f"Using local medium Materials Project MACE model for MACECalculator {model}")
-            return local_model_path
-            
-        try:
-            urls = {
-                    "small": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0/2023-12-10-mace-128-L0_energy_epoch-249.model",
-                    "medium": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0/2023-12-03-mace-128-L1_epoch-199.model",
-                    "large": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0/MACE_MPtrj_2022.9.model",
-                    "small-0b": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b/mace_agnesi_small.model",
-                    "medium-0b": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b/mace_agnesi_medium.model",
-                    "small-0b2": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b2/mace-small-density-agnesi-stress.model",
-                    "medium-0b2": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b2/mace-medium-density-agnesi-stress.model",
-                    "large-0b2": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b2/mace-large-density-agnesi-stress.model",
-                    "medium-0b3": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b3/mace-mp-0b3-medium.model",
-                    "medium-mpa-0": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mpa_0/mace-mpa-0-medium.model",
-                    }
-            
-            checkpoint_url = (
-                urls.get(model, urls["medium-mpa-0"])
-                if model
-                in (
-                    None,
-                    "small",
-                    "medium",
-                    "large",
-                    "small-0b",
-                    "medium-0b",
-                    "small-0b2",
-                    "medium-0b2",
-                    "large-0b2",
-                    "medium-0b3",
-                    "medium-mpa-0",
-                )
-                else model
-            )
-            
-            cache_dir = os.path.expanduser("~/.cache/mace")
-            checkpoint_url_name = "".join(c for c in os.path.basename(checkpoint_url) if c.isalnum() or c in "_")
-            cached_model_path = f"{cache_dir}/{checkpoint_url_name}"
-            
-            if not os.path.isfile(cached_model_path):
-                os.makedirs(cache_dir, exist_ok=True)
-                # download and save to disk
-                logging.info(f"Downloading MACE model from {checkpoint_url!r}")
-                _, http_msg = urllib.request.urlretrieve(checkpoint_url, cached_model_path)
-                if "Content-Type: text/html" in http_msg:
-                    raise RuntimeError(f"Model download failed, please check the URL {checkpoint_url}")
-                logging.info(f"Cached MACE model to {cached_model_path}")
-            model = cached_model_path
-            logging.info(f"Using Materials Project MACE for MACECalculator with {model}")
-            
-        except Exception as exc:
-            raise RuntimeError("Model download failed and no local model found") from exc
-            
-        return model
-    
-    def reset_E0s(self, stats):
-        for i in range(len(self.model.atomic_energies_fn.atomic_energies)):
-            self.model.atomic_energies_fn.atomic_energies[i]=0.
-        for k in stats.keys():
-            self.model.atomic_energies_fn.atomic_energies[k-1]=stats[k]
     
     def forward(self, batch):
         output = self.model(batch, training=self.freeze_head, compute_force=False, compute_stress=False)
