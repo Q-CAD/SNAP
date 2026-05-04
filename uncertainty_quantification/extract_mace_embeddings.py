@@ -23,6 +23,7 @@ reflect those of the United States Government or any agency thereof.
                     under Contract DE-AC05-76RL01830
 '''
 
+import os
 import torch
 from mace import data
 from mace.tools import torch_geometric, utils
@@ -42,18 +43,24 @@ class InteractionHead():
             "float32" recommended for MD, "float64" recommended for geometry optimization
         '''
         self.model_type = model
-        self.emb_size = emb_size_map[self.model_type]
         self.device = device
         self.checkpoint = checkpoint
         self.charges_key = "Qs"
-        
-        # load the model
-        self.calc = mace_mp(model=self.model_type, default_dtype=default_type, device=self.device)
-        
-        # load finetuned weights from model checkpoint
-        if self.checkpoint != None:
-            self.calc.model.load_state_dict({k:v for k,v in torch.load(self.checkpoint, map_location=self.device)['state_dict'].items()})
-        
+       
+        # Check if model is a path to a local file
+        if os.path.exists(model):
+            # Load custom model directly - bypasses mace_mp base entirely
+            from mace.calculators import MACECalculator
+            self.calc = MACECalculator(model_paths=model, device=self.device, default_dtype=default_type)
+            # emb_size must be inferred from the loaded model
+            self.emb_size = self.calc.models[0].interactions[0].hidden_irreps.dim
+        else:
+            # Load from mace_mp hub (original behavior)
+            self.emb_size = emb_size_map[self.model_type]
+            self.calc = mace_mp(model=self.model_type, default_dtype=default_type, device=self.device)
+            # Overlay fine-tuned weights if checkpoint provided
+            if self.checkpoint is not None:
+                self.calc.model.load_state_dict({k:v for k,v in torch.load(self.checkpoint, map_location=self.device)['state_dict'].items()})
 
         self.r_max = self.calc.models[0].r_max.item()
         self.z_table = z_table = utils.AtomicNumberTable([int(z) for z in self.calc.models[0].atomic_numbers])

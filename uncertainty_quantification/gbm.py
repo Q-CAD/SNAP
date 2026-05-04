@@ -112,4 +112,4 @@ class GBMRegressor:
             with open(os.path.join(self.savedir, self.model_file), 'rb') as f:
                 self.booster = pickle.load(f)
         else:
-            logging.warning(f'No trained GBM regressor found in {self.savedir}. Call GBMRegressor.update to train a model.')
+            logging.warning(f'No trained GBM regressor {self.model_file} found in {self.savedir}. Call GBMRegressor.update to train a model.')

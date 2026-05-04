@@ -33,6 +33,7 @@ import logging
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--embeddings', required=True, type=str, help='npz file containing pre-computed embeddings')
+parser.add_argument('--loaddir', required=True, type=str, help='Directory to load GBM model')
 parser.add_argument('--savedir', required=True, type=str, help='Directory to save output')
 parser.add_argument('--upper-alpha', default=0.95, type=float, help='Upper quantile for prediction intervals') 
 parser.add_argument('--lower-alpha', default=0.05, type=float, help='Lower quantile for prediction intervals') 
@@ -46,13 +47,13 @@ data = np.load(args.embeddings)
 node_feats = data['node_feats']
 
 # Load trained GBM model
-gbm = GBMRegressor(savedir=args.savedir,
+gbm = GBMRegressor(savedir=args.loaddir,
                    n_estimators=args.estimators, 
                    upper_alpha=args.upper_alpha, 
                    lower_alpha=args.lower_alpha)
 gbm._load()
 
-logging.info(f"Trained GBM loaded from {args.savedir}.")
+logging.info(f"Trained GBM loaded from {args.loaddir}.")
 
 # Make predictions with uncertainty quantification
 out = gbm.forward(node_feats)

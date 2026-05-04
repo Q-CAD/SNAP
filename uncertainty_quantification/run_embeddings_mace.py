@@ -34,9 +34,10 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--sample', required=True, type=str, help='Sample file containing atomic configurations')
 parser.add_argument('--savedir', required=True, type=str, help='Directory to save output')
-parser.add_argument('--model-size', default="medium-0b", type=str, help='model size for MACE calculator')
+parser.add_argument('--model-size', default="medium-0b", type=str, help='model size for MACE calculator OR path to MACE model')
 parser.add_argument('--checkpoint', default=None, type=str, help='Optional path to finetuned model checkpoint')
 parser.add_argument('--index', default=":", type=str, help='Configurations to load.')
+parser.add_argument('--default_type', default="float64", choices=["float32", "float64"], help='Float type for model')
 args = parser.parse_args()
 
 os.makedirs(args.savedir, exist_ok=True)
@@ -48,7 +49,7 @@ atoms_list = read(args.sample, index=args.index)
 logging.info(f'{len(atoms_list)} configurations loaded from {args.sample}.')
 
 # Load MACE model 
-head = InteractionHead(model=args.model_size, device="cuda", default_type="float32")
+head = InteractionHead(model=args.model_size, device="cuda", default_type=args.default_type, checkpoint=args.checkpoint)
 
 # Extract embeddings and node energies for each configuration
 node_feats=[]

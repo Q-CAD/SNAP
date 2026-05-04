@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SNAP"
+version = "0.1.0"
+description = "Uncertainty Quantification"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Ryan Morelock", email = "rym@ornl.gov" }
+]
+dependencies = [
+]
+
+[project.scripts]
+run_embeddings_mace = "snap_entrypoints:run_embeddings_mace" 
+run_gbm = "snap_entrypoints:run_gbm" 
+run_embeddings_uma = "snap_entrypoints:run_embeddings_uma" 
+train_gbm = "snap_entrypoints:train_gbm"
+quantile_prediction = "snap_entrypoints:quantile_prediction"
+structure_selection = "snap_entrypoints:structure_selection"
+
+[tool.setuptools]
+py-modules = ["snap_entrypoints"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+"uncertainty_quantification" = ["*.py"]

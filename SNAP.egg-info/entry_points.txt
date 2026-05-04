@@ -1,0 +1,7 @@
+[console_scripts]
+quantile_prediction = snap_entrypoints:quantile_prediction
+run_embeddings_mace = snap_entrypoints:run_embeddings_mace
+run_embeddings_uma = snap_entrypoints:run_embeddings_uma
+run_gbm = snap_entrypoints:run_gbm
+structure_selection = snap_entrypoints:structure_selection
+train_gbm = snap_entrypoints:train_gbm
