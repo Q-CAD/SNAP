@@ -68,13 +68,22 @@ python run-gbm.py --embeddings 'data/embeddings/embedding_info_md_run.npz' --sav
 ```
 
 ### ADDITION: Compute normalized total energy uncertainties for a collection of structures
+
+```
 quantile_prediction -h
+```
 
 ### ADDITION: Select the most uncertain images from a pool of different structure predictions
+
+```
 structure_selection -h
+```
 
 ### ADDITION: Create cubic simulation cells from the sites with the largest range of energy contributions based on GBM regressors
+
+```
 screen_sites -h
+```
 
 ## Citation
 If you use this code in your research, please cite the following paper:
