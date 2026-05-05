@@ -21,6 +21,7 @@ run_embeddings_uma = "snap_entrypoints:run_embeddings_uma"
 train_gbm = "snap_entrypoints:train_gbm"
 quantile_prediction = "snap_entrypoints:quantile_prediction"
 structure_selection = "snap_entrypoints:structure_selection"
+screen_sites = "snap_entrypoints:screen_sites"
 
 [tool.setuptools]
 py-modules = ["snap_entrypoints"]
